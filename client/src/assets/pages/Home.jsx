@@ -73,13 +73,12 @@ function Home() {
       <div className="bg-[#131110]">
         <div className="flex flex-col sm:gap-6 gap-3 p-28 px-3 max-w-6xl mx-auto">
           <h1 className="mt-16 text-white font-bold sm:text-3xl text-xl lg:text-6xl">
-            Find your next <span className="text-[#40A2D8]">perfect</span>{" "}
-            <br /> place with ease
+            Discover your next <span className="text-[#40A2D8]">premium</span>{" "}
+            <br /> living space
           </h1>
           <div className="text-gray-400 text-xs sm:text-sm">
-            skyEstate is the best place to find your next perfect place to live.{" "}
-            <br />
-            We have a wide range of properties for you to choose from.
+            skyEstate connects you to a curated collection of verified homes, luxury apartments, <br />
+            and modern spaces. Explore listing options tailored perfectly to your lifestyle.
           </div>
           <Link
             className="text-xs sm:text-sm text-[#008DDA] hover:underline"

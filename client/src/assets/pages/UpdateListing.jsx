@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
-import {getDownloadURL, getStorage, ref ,uploadBytesResumable} from 'firebase/storage'
-import {app} from '../../firebase'
+import { supabase } from '../../supabase.js';
 import {useSelector} from 'react-redux'
 import {useNavigate , useParams} from 'react-router-dom'
 
@@ -37,9 +36,13 @@ const updateListing = () => {
         const data = await res.json();
         if(data.success === false){
             console.log(data)
+            return;
         }
-        setFormData(data);
-
+        const discountAmount = data.offer ? (Number(data.regularPrice) - Number(data.discountedPrice)) : 0;
+        setFormData({
+          ...data,
+          discountedPrice: discountAmount
+        });
     }
     fetchListing()
   }, [])
@@ -59,7 +62,7 @@ const updateListing = () => {
         setImageUploading(false)
         
       }).catch((err)=>{
-        setImageUploadError('image upload failed (2mb max per image)')
+        setImageUploadError(err.message || 'Image upload failed')
         setImageUploading(false)
       });
     }else{
@@ -69,27 +72,23 @@ const updateListing = () => {
   }
 
   const storeImage = async(file)=>{
-    return new Promise((resolve,reject)=>{
-      const storage = getStorage(app);
-      const fileName = new Date().getTime()+ file.name
-      const storageRef = ref(storage,fileName);
-      const uploadTask = uploadBytesResumable(storageRef , file)
-      uploadTask.on(
-        "state_changed",
-        (snapshot)=>{
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes)*100;
-          console.log(`upload is  ${progress}% done`)
-        },
-        (error)=>{
-          reject(error);
-        },
-        ()=>{
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl)=>{
-            resolve(downloadUrl)
-          });
-        }
-      )
-    })
+    const fileName = `${new Date().getTime()}_${file.name}`
+    const { data, error } = await supabase.storage
+      .from('images')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('images')
+      .getPublicUrl(fileName);
+
+    return publicUrl;
   }
 
   const handleRemoveImage = (index) => {
@@ -130,12 +129,15 @@ const updateListing = () => {
         return setError('You must upload at least one image')
       }
 
-      if(formData.regularPrice < formData.discountedPrice){
-        return setError('Discounted price must be lower than regular price')
+      if (formData.offer && Number(formData.discountedPrice) >= Number(formData.regularPrice)) {
+        return setError('Discount amount must be less than regular price');
       }
       // console.log(error)
       setLoading(true)
       setError(false)
+      const finalDiscountedPrice = formData.offer 
+        ? (Number(formData.regularPrice) - Number(formData.discountedPrice)) 
+        : 0;
       // console.log(error)
       const res = await fetch (`/api/listing/update/${params.listingId}` ,{
         method:'POST',
@@ -144,6 +146,7 @@ const updateListing = () => {
         },
         body: JSON.stringify({
           ...formData,
+          discountedPrice: finalDiscountedPrice,
           userRef:currentUser._id,
       }),
       })
@@ -152,7 +155,7 @@ const updateListing = () => {
       setLoading(false)
       if(data.success === false){
         setError(data.message)
-        // console.log(error)
+        return;
       }
       navigate(`/listing/${data._id}`);
     } catch (error) {
@@ -214,7 +217,7 @@ const updateListing = () => {
             <div className='flex items-center gap-2'>
               <input value={formData.discountedPrice} onChange={handleChange} className='p-3 border border-gray rounded-lg' type="number" id='discountedPrice' min='0' max='1,000,000' required/>
               <div>
-              <p>Discount price</p>
+              <p>Discount / Offer Amount</p>
               <span className='text-xs'>($ /month)</span>
               </div>
             </div>

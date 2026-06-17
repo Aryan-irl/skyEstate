@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Swiper,  SwiperSlide } from 'swiper/react';
 import SwiperCore from 'swiper';
 import { useSelector } from 'react-redux';
@@ -29,6 +29,26 @@ export default function Listing() {
   const [contact, setContact] = useState(false);
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+
+  const handleDeleteListing = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/listing/delete/${listing._id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      setLoading(false);
+      if (data.success === false) {
+        setError(data.message);
+        return;
+      }
+      navigate('/profile');
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
 
 
   useEffect(() => {
@@ -169,20 +189,37 @@ export default function Listing() {
               </button>
             )} */}
 {/*             {contact && <Contact listing={listing} />} */}
-  <div className="flex gap-5">
-        <a
-            className="bg-red-700 w-full max-w-[300px] text-white font-bold text-center p-3 rounded-full"
-            href="tel:+919625021125"
-          >
-            Call now
-          </a>
-        <a
-            className="bg-green-700 w-full max-w-[300px] text-white font-bold text-center p-3 rounded-full"
-            href="https://wa.me/9625021125"
-          >
-            Whatsapp
-          </a>
-          </div>
+  {currentUser && listing.userRef === currentUser._id ? (
+    <div className="flex gap-5">
+      <button
+        onClick={handleDeleteListing}
+        className="bg-red-700 w-full max-w-[300px] text-white font-bold text-center p-3 rounded-full uppercase hover:opacity-90 cursor-pointer"
+      >
+        Delete Listing
+      </button>
+      <Link
+        to={`/update-listing/${listing._id}`}
+        className="bg-slate-700 w-full max-w-[300px] text-white font-bold text-center p-3 rounded-full uppercase hover:opacity-90 cursor-pointer"
+      >
+        Edit Listing
+      </Link>
+    </div>
+  ) : (
+    <div className="flex gap-5">
+      <a
+          className="bg-red-700 w-full max-w-[300px] text-white font-bold text-center p-3 rounded-full"
+          href="tel:+919315849406"
+        >
+          Call now
+        </a>
+      <a
+          className="bg-green-700 w-full max-w-[300px] text-white font-bold text-center p-3 rounded-full"
+          href="https://wa.me/9315849406"
+        >
+          Whatsapp
+        </a>
+    </div>
+  )}
           </div>
         </div>
       )}

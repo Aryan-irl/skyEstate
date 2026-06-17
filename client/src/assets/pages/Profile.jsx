@@ -1,12 +1,6 @@
 import { useSelector } from 'react-redux';
 import { useRef, useState, useEffect } from 'react';
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from 'firebase/storage';
-import { app } from '../../firebase.js';
+import { supabase } from '../../supabase.js';
 import {
   updateUserStart,
   updateUserSuccess,
@@ -37,29 +31,35 @@ export default function Profile() {
     }
   }, [file]);
 
-  const handleFileUpload = (file) => {
-    const storage = getStorage(app);
-    const fileName = new Date().getTime() + file.name;
-    const storageRef = ref(storage, fileName);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-    
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setFilePerc(Math.round(progress));
-      },
-      (error) => {
-        setFileUploadError(true);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-          setFormData({ ...formData, avatar: downloadURL })
-        );
+  const handleFileUpload = async (file) => {
+    try {
+      setFileUploadError(false);
+      setFilePerc(10);
+      const fileName = `${new Date().getTime()}_${file.name}`;
+      
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        throw error;
       }
-    );
+
+      setFilePerc(100);
+      const { data: { publicUrl } } = supabase.storage
+        .from('images')
+        .getPublicUrl(fileName);
+
+      setFormData({ ...formData, avatar: publicUrl });
+    } catch (error) {
+      console.error(error);
+      setFileUploadError(true);
+    }
   };
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });

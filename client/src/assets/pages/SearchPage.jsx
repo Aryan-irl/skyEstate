@@ -98,6 +98,7 @@ const SearchPage = () => {
     urlParams.set('startIndex' , startIndex)
     const SearchQuery = urlParams.toString();
     const res = await fetch((`/api/listing/get?${SearchQuery}`))
+    const data = await res.json();
     if(data.length < 9){
       setShowMore(false);
     }
