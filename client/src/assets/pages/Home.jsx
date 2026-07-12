@@ -50,117 +50,138 @@ function Home() {
   const SliderButtons = () => {
     const swiper = useSwiper();
     return (
-      <div className=" font-black relative text-slate-800 flex gap-2">
+      <div className="flex gap-2 mt-4">
         <button
-          className="bg-slate-200 shadow-sm rounded-md mt-3 p-3 hover:opacity-80"
+          className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 text-zinc-100 shadow-sm rounded-full h-9 w-9 flex items-center justify-center hover:text-sky-400 active:scale-95 transition-all duration-200"
           onClick={() => swiper.slidePrev()}
         >
-          &lt;
+          &larr;
         </button>
         <button
-          className="bg-slate-200 shadow-sm rounded-md mt-3 p-3 hover:opacity-80"
+          className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 text-zinc-100 shadow-sm rounded-full h-9 w-9 flex items-center justify-center hover:text-sky-400 active:scale-95 transition-all duration-200"
           onClick={() => swiper.slideNext()}
         >
-          &gt;
+          &rarr;
         </button>
       </div>
     );
   };
 
   return (
-    <div className="bg-[#EEEEEE]">
-      {/* top */}
-      <div className="bg-[#131110]">
-        <div className="flex flex-col sm:gap-6 gap-3 p-28 px-3 max-w-6xl mx-auto">
-          <h1 className="mt-16 text-white font-bold sm:text-3xl text-xl lg:text-6xl">
-            Discover your next <span className="text-[#40A2D8]">premium</span>{" "}
-            <br /> living space
+    <div className="bg-[#0f0f10] min-h-screen text-zinc-100">
+      {/* top / Hero */}
+      <div className="relative overflow-hidden bg-gradient-to-b from-zinc-950 via-zinc-900 to-[#0f0f10] pt-24 pb-16 sm:pb-24 border-b border-zinc-800/30">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-950/20 via-transparent to-transparent pointer-events-none"></div>
+        <div className="flex flex-col sm:gap-6 gap-4 p-8 px-4 max-w-6xl mx-auto relative z-10">
+          <h1 className="mt-12 text-zinc-100 font-extrabold sm:text-4xl text-2xl lg:text-7xl tracking-tight leading-none">
+            Discover your next <span className="bg-gradient-to-r from-sky-400 to-indigo-400 bg-clip-text text-transparent">premium</span>
+            <br />living space
           </h1>
-          <div className="text-gray-400 text-xs sm:text-sm">
-            skyEstate connects you to a curated collection of verified homes, luxury apartments, <br />
-            and modern spaces. Explore listing options tailored perfectly to your lifestyle.
+          <div className="text-zinc-400 text-sm sm:text-base max-w-xl leading-relaxed">
+            skyEstate connects you to a curated collection of verified homes, luxury apartments, and modern spaces. Explore listing options tailored perfectly to your lifestyle.
           </div>
-          <Link
-            className="text-xs sm:text-sm text-[#008DDA] hover:underline"
-            to={"/search"}
-          >
-            Let's get started
-          </Link>
+          <div className="mt-4">
+            <Link
+              className="inline-flex items-center gap-2 text-sm font-semibold bg-gradient-to-r from-sky-500 to-blue-600 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-sky-500/25 hover:scale-[1.02] active:scale-95 transition-all duration-300"
+              to={"/search"}
+            >
+              Let's get started &rarr;
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* listing results */}
+      <div className="max-w-6xl mx-auto px-4 py-12 sm:px-6 flex flex-col gap-16">
+        
+        {offerListings && offerListings.length > 0 && (
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-end border-b border-zinc-800/60 pb-3">
+              <div>
+                <h2 className="sm:text-3xl text-xl font-extrabold text-zinc-100 tracking-tight">Recent offers</h2>
+                <p className="text-xs text-zinc-400 mt-1">Special deals and discounted premium properties</p>
+              </div>
+              <Link
+                className="text-xs sm:text-sm text-sky-400 hover:text-sky-300 font-medium hover:underline transition-colors"
+                to={"/search?offer=true"}
+              >
+                Show more offers
+              </Link>
+            </div>
+            <Swiper {...sliderSettings}>
+              <div className="flex justify-between items-center">
+                <SliderButtons />
+              </div>
+              <div className="flex flex-wrap item-center mt-6">
+                {offerListings.map((listing) => (
+                  <SwiperSlide key={listing._id}>
+                    <ListingItem listing={listing} />
+                  </SwiperSlide>
+                ))}
+              </div>
+            </Swiper>
+          </div>
+        )}
 
-      {offerListings && offerListings.length > 0 && (
-        <div className="max-w-6xl mx-auto p-3 gap-8 my-10">
-          <div>
-            <h2 className="sm:text-3xl text-xl font-bold text-slate-700">Recent offers</h2>
-            <Link
-              className="sm:text-sm text-[0.7rem] text-blue-800 hover:underline"
-              to={"/search?offer=true"}
-            >
-              Show more offers
-            </Link>
-          </div>
-          <Swiper {...sliderSettings}>
-            <SliderButtons />
-            <div className="flex flex-wrap item-center">
-              {offerListings.map((listing) => (
-                <SwiperSlide key={listing._id}>
-                  <ListingItem listing={listing} key={listing._id} />
-                </SwiperSlide>
-              ))}
+        {rentListings && rentListings.length > 0 && (
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-end border-b border-zinc-800/60 pb-3">
+              <div>
+                <h2 className="sm:text-3xl text-xl font-extrabold text-zinc-100 tracking-tight">Recent places for rent</h2>
+                <p className="text-xs text-zinc-400 mt-1">Curated luxury residential units available for lease</p>
+              </div>
+              <Link
+                className="text-xs sm:text-sm text-sky-400 hover:text-sky-300 font-medium hover:underline transition-colors"
+                to={"/search?type=rent"}
+              >
+                Show more places for rent
+              </Link>
             </div>
-          </Swiper>
-        </div>
-      )}
-      {saleListings && saleListings.length > 0 && (
-        <div className="max-w-6xl mx-auto p-3 gap-8 my-10">
-          <div>
-            <h2 className="sm:text-3xl text-xl font-bold text-slate-700">Recent places for sale</h2>
-            <Link
-              className="sm:text-sm text-[0.7rem] text-blue-800 hover:underline"
-              to={"/search?offer=true"}
-            >
-              Show more offers
-            </Link>
+            <Swiper {...sliderSettings}>
+              <div className="flex justify-between items-center">
+                <SliderButtons />
+              </div>
+              <div className="flex flex-wrap item-center mt-6">
+                {rentListings.map((listing) => (
+                  <SwiperSlide key={listing._id}>
+                    <ListingItem listing={listing} />
+                  </SwiperSlide>
+                ))}
+              </div>
+            </Swiper>
           </div>
-          <Swiper {...sliderSettings}>
-            <SliderButtons />
-            <div className="flex flex-wrap item-center">
-              {saleListings.map((listing) => (
-                <SwiperSlide key={listing._id}>
-                  <ListingItem listing={listing} key={listing._id} />
-                </SwiperSlide>
-              ))}
-            </div>
-          </Swiper>
-        </div>
-      )}
-      {rentListings && rentListings.length > 0 && (
-        <div className="max-w-6xl mx-auto p-3 gap-8 my-10">
-          <div>
-            <h2 className="sm:text-3xl text-xl font-bold text-slate-700">Recent places for rent</h2>
-            <Link
-              className="sm:text-sm text-[0.7rem] text-blue-800 hover:underline"
-              to={"/search?offer=true"}
-            >
-              Show more offers
-            </Link>
-          </div>
-          <Swiper {...sliderSettings}>
-            <SliderButtons />
-            <div className="flex flex-wrap item-center">
-              {rentListings.map((listing) => (
-                <SwiperSlide key={listing._id}>
-                  <ListingItem listing={listing} key={listing._id} />
-                </SwiperSlide>
-              ))}
-            </div>
-          </Swiper>
-        </div>
-      )}
+        )}
 
+        {saleListings && saleListings.length > 0 && (
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-end border-b border-zinc-800/60 pb-3">
+              <div>
+                <h2 className="sm:text-3xl text-xl font-extrabold text-zinc-100 tracking-tight">Recent places for sale</h2>
+                <p className="text-xs text-zinc-400 mt-1">Stunning modern homes and buildings for purchase</p>
+              </div>
+              <Link
+                className="text-xs sm:text-sm text-sky-400 hover:text-sky-300 font-medium hover:underline transition-colors"
+                to={"/search?type=sale"}
+              >
+                Show more places for sale
+              </Link>
+            </div>
+            <Swiper {...sliderSettings}>
+              <div className="flex justify-between items-center">
+                <SliderButtons />
+              </div>
+              <div className="flex flex-wrap item-center mt-6">
+                {saleListings.map((listing) => (
+                  <SwiperSlide key={listing._id}>
+                    <ListingItem listing={listing} />
+                  </SwiperSlide>
+                ))}
+              </div>
+            </Swiper>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }

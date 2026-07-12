@@ -2,6 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-    background-color: rgb(241 , 245 , 241);
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  font-family: 'Outfit', sans-serif;
 }
+
+body {
+  background-color: #0f0f10;
+  color: #f4f4f5;
+  overflow-x: hidden;
+}
+
+/* Custom modern scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f0f10;
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+/* Glassmorphism Utilities */
+.glass-header {
+  background: rgba(15, 15, 16, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-card {
+  background: rgba(24, 24, 27, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glow-blue {
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.15);
+}
+
+.glow-blue-hover:hover {
+  box-shadow: 0 0 30px rgba(14, 165, 233, 0.3);
+}

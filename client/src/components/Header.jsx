@@ -26,30 +26,46 @@ function Header() {
   },[location.search]);
 
   return (
-    <header className='bg-[#181818] fixed z-20 w-full shadow-md'>
-      <div className='flex justify-between items-center max-w-6xl mx-auto p-3'>
+    <header className='glass-header fixed top-0 left-0 right-0 z-50 transition-all duration-300'>
+      <div className='flex justify-between items-center max-w-6xl mx-auto px-4 py-3 sm:px-6'>
         <Link to="/">
-        <h1 className='font-bold text-sm sm:text-xl flex flex-wrap'>
-            <span className='text-slate-200'>sky</span>
-            <span className='text-slate-600'>Estate</span>
-        </h1>
+          <h1 className='font-extrabold text-lg sm:text-2xl tracking-tight flex items-center gap-1 hover:opacity-90 transition-opacity'>
+            <span className='bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent'>sky</span>
+            <span className='text-zinc-100'>Estate</span>
+          </h1>
         </Link>
-        <form onSubmit={handleSubmit} className='bg-slate-100 p-3 flex items-center rounded-full'>
-            <input type="text" placeholder='Search...' className='bg-transparent text-[0.6rem] mx-auto sm:text-sm focus:outline-none w-26 h-2 sm:w-80 sm:h-5' onChange={(e)=>setSearchTerm(e.target.value)}/>
-            <button>
-            <FaSearch className='text-slate-500'/>
-            </button>
-            </form>
-            <ul className='flex sm:gap-4 gap-0 items-center m-1'>
-              <Link to="/">
-              <li className='hidden sm:text-md sm:inline text-white hover:opacity-90'>Home</li>
-              </Link>
-              <Link to="/profile">
-              {currentUser ? (<img className='rounded-full h-9 w-9 hover:opacity-90 object-cover' src={currentUser.avatar} alt="profile"/>) :
-              <li className='text-white text-[0.7rem] sm:text-[1rem] hover:opacity-90'>Sign In</li>}
-              </Link>
-            </ul>
-        
+        <form onSubmit={handleSubmit} className='bg-zinc-800/80 border border-zinc-700/50 focus-within:border-sky-500/80 focus-within:ring-1 focus-within:ring-sky-500/30 px-4 py-2 flex items-center rounded-full transition-all duration-300 w-40 sm:w-96'>
+          <input
+            type="text"
+            placeholder='Search premium spaces...'
+            className='bg-transparent text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 focus:outline-none w-full mr-2'
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button type="submit" className='text-zinc-400 hover:text-sky-400 transition-colors'>
+            <FaSearch className='h-4 w-4' />
+          </button>
+        </form>
+        <ul className='flex items-center gap-4 sm:gap-6'>
+          <Link to="/">
+            <li className='hidden sm:inline text-sm font-medium text-zinc-300 hover:text-white transition-colors cursor-pointer'>
+              Home
+            </li>
+          </Link>
+          <Link to="/profile">
+            {currentUser ? (
+              <img
+                className='rounded-full h-8 w-8 hover:scale-105 border border-sky-500/30 object-cover shadow-sm transition-all duration-300'
+                src={currentUser.avatar}
+                alt="profile"
+              />
+            ) : (
+              <li className='text-sm font-semibold bg-gradient-to-r from-sky-500 to-blue-600 text-white px-4 py-2 rounded-full hover:shadow-lg hover:shadow-sky-500/20 active:scale-95 transition-all duration-300 cursor-pointer'>
+                Sign In
+              </li>
+            )}
+          </Link>
+        </ul>
       </div>
     </header>
   )
