@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
+import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css/bundle";
-import SwiperCore from "swiper";
-import { Navigation } from "swiper/modules";
 import ListingItem from "../../components/ListingItem";
 import { sliderSettings } from "../../sliderSettings.js";
 
@@ -11,14 +9,16 @@ function Home() {
   const [offerListings, setOfferListings] = useState([]);
   const [saleListings, setSaleListings] = useState([]);
   const [rentListings, setRentListings] = useState([]);
-  SwiperCore.use([Navigation]);
+
+  const [offerSwiper, setOfferSwiper] = useState(null);
+  const [rentSwiper, setRentSwiper] = useState(null);
+  const [saleSwiper, setSaleSwiper] = useState(null);
 
   useEffect(() => {
     const fetchOfferListings = async () => {
       try {
         const res = await fetch("/api/listing/get?offer=true");
         const data = await res.json();
-        // console.log(data)
         setOfferListings(data);
         fetchRentListings();
       } catch (error) {
@@ -46,26 +46,6 @@ function Home() {
     };
     fetchOfferListings();
   }, []);
-
-  const SliderButtons = () => {
-    const swiper = useSwiper();
-    return (
-      <div className="flex gap-2 mt-4">
-        <button
-          className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 text-zinc-100 shadow-sm rounded-full h-9 w-9 flex items-center justify-center hover:text-sky-400 active:scale-95 transition-all duration-200"
-          onClick={() => swiper.slidePrev()}
-        >
-          &larr;
-        </button>
-        <button
-          className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 text-zinc-100 shadow-sm rounded-full h-9 w-9 flex items-center justify-center hover:text-sky-400 active:scale-95 transition-all duration-200"
-          onClick={() => swiper.slideNext()}
-        >
-          &rarr;
-        </button>
-      </div>
-    );
-  };
 
   return (
     <div className="bg-[#0f0f10] min-h-screen text-zinc-100">
@@ -96,87 +76,126 @@ function Home() {
         
         {offerListings && offerListings.length > 0 && (
           <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-end border-b border-zinc-800/60 pb-3">
+            <div className="flex justify-between items-end border-b border-zinc-800/60 pb-3 flex-wrap gap-4">
               <div>
                 <h2 className="sm:text-3xl text-xl font-extrabold text-zinc-100 tracking-tight">Recent offers</h2>
                 <p className="text-xs text-zinc-400 mt-1">Special deals and discounted premium properties</p>
               </div>
-              <Link
-                className="text-xs sm:text-sm text-sky-400 hover:text-sky-300 font-medium hover:underline transition-colors"
-                to={"/search?offer=true"}
-              >
-                Show more offers
-              </Link>
+              <div className="flex items-center gap-4">
+                <Link
+                  className="text-xs sm:text-sm text-sky-400 hover:text-sky-300 font-medium hover:underline transition-colors"
+                  to={"/search?offer=true"}
+                >
+                  Show more offers
+                </Link>
+                <div className="flex gap-2">
+                  <button
+                    className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 text-zinc-100 shadow-sm rounded-full h-8 w-8 flex items-center justify-center hover:text-sky-400 active:scale-95 transition-all duration-200"
+                    onClick={() => offerSwiper?.slidePrev()}
+                    aria-label="Previous slide"
+                  >
+                    &larr;
+                  </button>
+                  <button
+                    className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 text-zinc-100 shadow-sm rounded-full h-8 w-8 flex items-center justify-center hover:text-sky-400 active:scale-95 transition-all duration-200"
+                    onClick={() => offerSwiper?.slideNext()}
+                    aria-label="Next slide"
+                  >
+                    &rarr;
+                  </button>
+                </div>
+              </div>
             </div>
-            <Swiper {...sliderSettings}>
-              <div className="flex justify-between items-center">
-                <SliderButtons />
-              </div>
-              <div className="flex flex-wrap item-center mt-6">
-                {offerListings.map((listing) => (
-                  <SwiperSlide key={listing._id}>
-                    <ListingItem listing={listing} />
-                  </SwiperSlide>
-                ))}
-              </div>
+            <Swiper onSwiper={setOfferSwiper} {...sliderSettings} className="py-4 w-full">
+              {offerListings.map((listing) => (
+                <SwiperSlide key={listing._id}>
+                  <ListingItem listing={listing} />
+                </SwiperSlide>
+              ))}
             </Swiper>
           </div>
         )}
 
         {rentListings && rentListings.length > 0 && (
           <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-end border-b border-zinc-800/60 pb-3">
+            <div className="flex justify-between items-end border-b border-zinc-800/60 pb-3 flex-wrap gap-4">
               <div>
                 <h2 className="sm:text-3xl text-xl font-extrabold text-zinc-100 tracking-tight">Recent places for rent</h2>
                 <p className="text-xs text-zinc-400 mt-1">Curated luxury residential units available for lease</p>
               </div>
-              <Link
-                className="text-xs sm:text-sm text-sky-400 hover:text-sky-300 font-medium hover:underline transition-colors"
-                to={"/search?type=rent"}
-              >
-                Show more places for rent
-              </Link>
+              <div className="flex items-center gap-4">
+                <Link
+                  className="text-xs sm:text-sm text-sky-400 hover:text-sky-300 font-medium hover:underline transition-colors"
+                  to={"/search?type=rent"}
+                >
+                  Show more places for rent
+                </Link>
+                <div className="flex gap-2">
+                  <button
+                    className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 text-zinc-100 shadow-sm rounded-full h-8 w-8 flex items-center justify-center hover:text-sky-400 active:scale-95 transition-all duration-200"
+                    onClick={() => rentSwiper?.slidePrev()}
+                    aria-label="Previous slide"
+                  >
+                    &larr;
+                  </button>
+                  <button
+                    className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700/80 text-zinc-100 shadow-sm rounded-full h-8 w-8 flex items-center justify-center hover:text-sky-400 active:scale-95 transition-all duration-200"
+                    onClick={() => rentSwiper?.slideNext()}
+                    aria-label="Next slide"
+                  >
+                    &rarr;
+                  </button>
+                </div>
+              </div>
             </div>
-            <Swiper {...sliderSettings}>
-              <div className="flex justify-between items-center">
-                <SliderButtons />
-              </div>
-              <div className="flex flex-wrap item-center mt-6">
-                {rentListings.map((listing) => (
-                  <SwiperSlide key={listing._id}>
-                    <ListingItem listing={listing} />
-                  </SwiperSlide>
-                ))}
-              </div>
+            <Swiper onSwiper={setRentSwiper} {...sliderSettings} className="py-4 w-full">
+              {rentListings.map((listing) => (
+                <SwiperSlide key={listing._id}>
+                  <ListingItem listing={listing} />
+                </SwiperSlide>
+              ))}
             </Swiper>
           </div>
         )}
 
         {saleListings && saleListings.length > 0 && (
           <div className="flex flex-col gap-4">
-            <div className="flex justify-between items-end border-b border-zinc-800/60 pb-3">
+            <div className="flex justify-between items-end border-b border-zinc-800/60 pb-3 flex-wrap gap-4">
               <div>
                 <h2 className="sm:text-3xl text-xl font-extrabold text-zinc-100 tracking-tight">Recent places for sale</h2>
                 <p className="text-xs text-zinc-400 mt-1">Stunning modern homes and buildings for purchase</p>
               </div>
-              <Link
-                className="text-xs sm:text-sm text-sky-400 hover:text-sky-300 font-medium hover:underline transition-colors"
-                to={"/search?type=sale"}
-              >
-                Show more places for sale
-              </Link>
+              <div className="flex items-center gap-4">
+                <Link
+                  className="text-xs sm:text-sm text-sky-400 hover:text-sky-300 font-medium hover:underline transition-colors"
+                  to={"/search?type=sale"}
+                >
+                  Show more places for sale
+                </Link>
+                <div className="flex gap-2">
+                  <button
+                    className="bg-zinc-850 hover:bg-zinc-800 border border-zinc-800 text-zinc-100 shadow-sm rounded-full h-8 w-8 flex items-center justify-center hover:text-sky-400 active:scale-95 transition-all duration-200"
+                    onClick={() => saleSwiper?.slidePrev()}
+                    aria-label="Previous slide"
+                  >
+                    &larr;
+                  </button>
+                  <button
+                    className="bg-zinc-850 hover:bg-zinc-800 border border-zinc-800 text-zinc-100 shadow-sm rounded-full h-8 w-8 flex items-center justify-center hover:text-sky-400 active:scale-95 transition-all duration-200"
+                    onClick={() => saleSwiper?.slideNext()}
+                    aria-label="Next slide"
+                  >
+                    &rarr;
+                  </button>
+                </div>
+              </div>
             </div>
-            <Swiper {...sliderSettings}>
-              <div className="flex justify-between items-center">
-                <SliderButtons />
-              </div>
-              <div className="flex flex-wrap item-center mt-6">
-                {saleListings.map((listing) => (
-                  <SwiperSlide key={listing._id}>
-                    <ListingItem listing={listing} />
-                  </SwiperSlide>
-                ))}
-              </div>
+            <Swiper onSwiper={setSaleSwiper} {...sliderSettings} className="py-4 w-full">
+              {saleListings.map((listing) => (
+                <SwiperSlide key={listing._id}>
+                  <ListingItem listing={listing} />
+                </SwiperSlide>
+              ))}
             </Swiper>
           </div>
         )}

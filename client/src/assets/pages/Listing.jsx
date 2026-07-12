@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Swiper,  SwiperSlide } from 'swiper/react';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore from 'swiper';
 import { useSelector } from 'react-redux';
 import { Navigation } from 'swiper/modules';
@@ -10,15 +9,11 @@ import {
   FaBath,
   FaBed,
   FaChair,
-  FaMapMarkedAlt,
   FaMapMarkerAlt,
   FaParking,
   FaShare,
 } from 'react-icons/fa';
 import Contact from '../../components/Contact';
-import { sliderSettings } from "../../sliderSettings.js";
-
-// https://sabe.io/blog/javascript-format-numbers-commas#:~:text=The%20best%20way%20to%20format,format%20the%20number%20with%20commas.
 
 export default function Listing() {
   SwiperCore.use([Navigation]);
@@ -26,7 +21,6 @@ export default function Listing() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [contact, setContact] = useState(false);
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -50,7 +44,6 @@ export default function Listing() {
     }
   };
 
-
   useEffect(() => {
     const fetchListing = async () => {
       try {
@@ -73,39 +66,26 @@ export default function Listing() {
     fetchListing();
   }, [params.listingId]);
 
-  const SliderButtons = () => {
-    const swiper = useSwiper();
-    return (
-      <div className=" font-black relative text-slate-800 flex gap-2">
-        <button
-          className="bg-slate-200 shadow-sm rounded-md mt-3 p-3 hover:opacity-80"
-          onClick={() => swiper.slidePrev()}
-        >
-          &lt;
-        </button>
-        <button
-          className="bg-slate-200 shadow-sm rounded-md mt-3 p-3 hover:opacity-80"
-          onClick={() => swiper.slideNext()}
-        >
-          &gt;
-        </button>
-      </div>
-    );
-  };
-
   return (
-    <div className='bg-[#EEEEEE]'>
-      {loading && <p className='text-center my-7 text-2xl'>Loading...</p>}
+    <div className='bg-[#0f0f10] min-h-screen text-zinc-100 pt-20 pb-12'>
+      {loading && (
+        <div className="flex justify-center items-center py-40">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500"></div>
+        </div>
+      )}
       {error && (
-        <p className='text-center my-7 text-2xl'>Something went wrong!</p>
+        <div className="flex flex-col items-center justify-center py-40 gap-2 text-zinc-400">
+          <p className='text-2xl font-semibold'>Something went wrong!</p>
+          <Link to="/" className="text-sky-400 hover:underline">Return Home</Link>
+        </div>
       )}
       {listing && !loading && !error && (
-        <div>
-          <Swiper navigation>
+        <div className="px-4 sm:px-6">
+          <Swiper navigation className="my-8 rounded-2xl overflow-hidden max-w-5xl mx-auto border border-zinc-800/40">
             {listing.imageUrls.map((url) => (
-              <SwiperSlide  key={url}>
+              <SwiperSlide key={url}>
                 <div
-                  className='lg:h-[550px] rounded-lg h-[200px] w-[300px] md:h-[450px] md:w-[650px] lg:w-[1250px] mx-auto mb-5 mt-24'
+                  className='h-[250px] sm:h-[400px] md:h-[500px] lg:h-[600px] w-full'
                   style={{
                     background: `url(${url}) center no-repeat`,
                     backgroundSize: 'cover',
@@ -114,9 +94,10 @@ export default function Listing() {
               </SwiperSlide>
             ))}
           </Swiper>
-          <div className='absolute top-[13%] right-[3%] z-10 border rounded-full w-12 h-12 flex justify-center shadow-gray-300 shadow-sm items-center bg-slate-100 cursor-pointer'>
+
+          <div className='absolute top-[22%] right-[5%] z-20 border border-zinc-800/50 rounded-full w-10 h-10 flex justify-center shadow-lg items-center bg-zinc-900/90 backdrop-blur-sm cursor-pointer text-zinc-300 hover:text-sky-400 hover:border-sky-500/30 transition-all'>
             <FaShare
-              className='text-slate-500'
+              className='h-4 w-4'
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
                 setCopied(true);
@@ -127,99 +108,99 @@ export default function Listing() {
             />
           </div>
           {copied && (
-            <p className='absolute shadow-gray-300 shadow-sm top-[23%] right-[5%] z-10 rounded-md bg-slate-100 p-2'>
+            <p className='absolute shadow-xl border border-zinc-850 top-[28%] right-[5%] z-20 rounded-xl bg-zinc-900/90 backdrop-blur-sm text-zinc-100 text-xs px-3.5 py-2 font-medium'>
               Link copied!
             </p>
           )}
-          <div className='flex flex-col max-w-7xl mx-auto p-3 gap-5'>
-            <p className='lg:text-3xl text-lg font-bold'>
-              {listing.name} - <span className='text-green-700'>${''}
-              {listing.offer
-                ? listing.discountedPrice.toLocaleString('en-us') 
-                : listing.regularPrice.toLocaleString('en-us') }
-              {listing.type === 'rent' && ' / month'}
-              </span>
-            </p>
-            <p className='flex items-center gap-2 mt-[-10px] text-slate-600  lg:text-md text-sm'>
-              <FaMapMarkerAlt className='text-green-700' />
+
+          <div className='flex flex-col max-w-5xl mx-auto p-6 gap-6 bg-zinc-900/30 border border-zinc-800/40 rounded-2xl relative z-10 glass-card'>
+            <div className='flex flex-col gap-2'>
+              <h1 className='text-2xl sm:text-4xl font-extrabold tracking-tight text-zinc-100'>
+                {listing.name}
+              </h1>
+              <p className='text-xl sm:text-2xl font-extrabold text-sky-400'>
+                ${listing.offer
+                  ? listing.discountedPrice.toLocaleString('en-us') 
+                  : listing.regularPrice.toLocaleString('en-us') }
+                {listing.type === 'rent' && <span className='text-sm font-normal text-zinc-400'> / month</span>}
+              </p>
+            </div>
+
+            <p className='flex items-center gap-2 text-zinc-400 text-sm'>
+              <FaMapMarkerAlt className='text-sky-400 h-4 w-4 shrink-0' />
               {listing.address}
             </p>
-            <div className='flex mt-2'>
-              <p className='text-green-900 font-bold p-1'>
-                ({listing.type === 'rent' ? 'For Rent' : 'For Sale'})
-              </p>
+
+            <div className='flex gap-3 flex-wrap'>
+              <span className={`px-3.5 py-1.5 rounded-full text-xs font-extrabold tracking-wider uppercase text-white ${
+                listing.type === 'rent' ? 'bg-sky-500/80 backdrop-blur-sm' : 'bg-amber-500/80 backdrop-blur-sm'
+              }`}>
+                For {listing.type === 'rent' ? 'Rent' : 'Sale'}
+              </span>
               {listing.offer && (
-                <p className='text-green-900 font-bold p-1'>
-                  (${+listing.regularPrice  - +listing.discountedPrice } OFF)
-                </p>
+                <span className='bg-emerald-500/80 backdrop-blur-sm text-white px-3.5 py-1.5 rounded-full text-xs font-extrabold tracking-wider uppercase'>
+                  ${(Number(listing.regularPrice) - Number(listing.discountedPrice)).toLocaleString('en-us')} OFF
+                </span>
               )}
             </div>
-            <p className='text-slate-800'>
-              <span className='font-semibold text-black lg:text-lg text-sm mt-5'>Description - </span>
-              {listing.description}
-            </p>
-            <ul className='text-green-900 font-bold lg:text-xl text-xs flex flex-wrap items-center gap-4 sm:gap-6'>
-              <li className='flex items-center gap-1 whitespace-nowrap '>
-                <FaBed className='text-lg' />
-                {listing.bedrooms > 1
-                  ? `${listing.bedrooms} beds `
-                  : `${listing.bedrooms} bed `}
-              </li>
-              <li className='flex items-center gap-1 whitespace-nowrap '>
-                <FaBath className='text-lg' />
-                {listing.bathrooms > 1
-                  ? `${listing.bathrooms} baths `
-                  : `${listing.bathrooms} bath `}
-              </li>
-              <li className='flex items-center gap-1 whitespace-nowrap '>
-                <FaParking className='text-lg' />
-                {listing.parking ? 'Parking spot' : 'No Parking'}
-              </li>
-              <li className='flex items-center gap-1 whitespace-nowrap '>
-                <FaChair className='text-lg' />
-                {listing.furnished ? 'Furnished' : 'Unfurnished'}
-              </li>
-            </ul>
-{/*             {currentUser && listing.userRef !== currentUser._id && !contact && (
-              <button
-                onClick={() => setContact(true)}
-                className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3'
-              >
-                Contact landlord
-              </button>
-            )} */}
-{/*             {contact && <Contact listing={listing} />} */}
-  {currentUser && listing.userRef === currentUser._id ? (
-    <div className="flex gap-5">
-      <button
-        onClick={handleDeleteListing}
-        className="bg-red-700 w-full max-w-[300px] text-white font-bold text-center p-3 rounded-full uppercase hover:opacity-90 cursor-pointer"
-      >
-        Delete Listing
-      </button>
-      <Link
-        to={`/update-listing/${listing._id}`}
-        className="bg-slate-700 w-full max-w-[300px] text-white font-bold text-center p-3 rounded-full uppercase hover:opacity-90 cursor-pointer"
-      >
-        Edit Listing
-      </Link>
-    </div>
-  ) : (
-    <div className="flex gap-5">
-      <a
-          className="bg-red-700 w-full max-w-[300px] text-white font-bold text-center p-3 rounded-full"
-          href="tel:+919315849406"
-        >
-          Call now
-        </a>
-      <a
-          className="bg-green-700 w-full max-w-[300px] text-white font-bold text-center p-3 rounded-full"
-          href="https://wa.me/9315849406"
-        >
-          Whatsapp
-        </a>
-    </div>
-  )}
+
+            <div className='border-t border-zinc-800/80 pt-6'>
+              <h3 className='font-bold text-zinc-200 text-lg mb-3'>Description</h3>
+              <p className='text-zinc-450 text-sm leading-relaxed whitespace-pre-line'>{listing.description}</p>
+            </div>
+
+            <div className='flex flex-wrap gap-4 pt-6 border-t border-zinc-800/80'>
+              <div className='flex items-center gap-2 bg-zinc-800/30 border border-zinc-800/60 px-4 py-2.5 rounded-xl text-zinc-300 text-sm'>
+                <FaBed className='text-sky-400 text-base' />
+                <span>{listing.bedrooms} {listing.bedrooms > 1 ? 'Beds' : 'Bed'}</span>
+              </div>
+              <div className='flex items-center gap-2 bg-zinc-800/30 border border-zinc-800/60 px-4 py-2.5 rounded-xl text-zinc-300 text-sm'>
+                <FaBath className='text-sky-400 text-base' />
+                <span>{listing.bathrooms} {listing.bathrooms > 1 ? 'Baths' : 'Bath'}</span>
+              </div>
+              <div className='flex items-center gap-2 bg-zinc-800/30 border border-zinc-800/60 px-4 py-2.5 rounded-xl text-zinc-300 text-sm'>
+                <FaParking className='text-sky-400 text-base' />
+                <span>{listing.parking ? 'Parking spot' : 'No Parking'}</span>
+              </div>
+              <div className='flex items-center gap-2 bg-zinc-800/30 border border-zinc-800/60 px-4 py-2.5 rounded-xl text-zinc-300 text-sm'>
+                <FaChair className='text-sky-400 text-base' />
+                <span>{listing.furnished ? 'Furnished' : 'Unfurnished'}</span>
+              </div>
+            </div>
+
+            <div className="flex gap-4 mt-4 flex-wrap sm:flex-nowrap">
+              {currentUser && listing.userRef === currentUser._id ? (
+                <>
+                  <button
+                    onClick={handleDeleteListing}
+                    className="bg-red-650/90 hover:bg-red-700 text-white font-bold text-center py-3.5 px-6 rounded-xl uppercase hover:shadow-lg active:scale-95 transition-all w-full sm:max-w-xs cursor-pointer"
+                  >
+                    Delete Listing
+                  </button>
+                  <Link
+                    to={`/update-listing/${listing._id}`}
+                    className="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-bold text-center py-3.5 px-6 rounded-xl uppercase hover:shadow-lg active:scale-95 transition-all w-full sm:max-w-xs flex justify-center items-center"
+                  >
+                    Edit Listing
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <a
+                    className="bg-sky-500 hover:bg-sky-600 text-white font-bold text-center py-3.5 px-6 rounded-xl w-full sm:max-w-xs shadow-md hover:shadow-lg hover:shadow-sky-500/10 active:scale-95 transition-all"
+                    href="tel:+919315849406"
+                  >
+                    Call now
+                  </a>
+                  <a
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-center py-3.5 px-6 rounded-xl w-full sm:max-w-xs shadow-md hover:shadow-lg hover:shadow-emerald-600/10 active:scale-95 transition-all"
+                    href="https://wa.me/9315849406"
+                  >
+                    WhatsApp
+                  </a>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}
